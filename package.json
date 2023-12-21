@@ -1,0 +1,31 @@
+{
+  "name": "aiemployee",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:web": "npm run dev --prefix ./client/web",
+    "dev:extension": "npm run dev --prefix ./client/extension",
+    "dev:server": "npm run dev --prefix ./server",
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:extension\" \"npm run dev:server\"",
+    "build:prod:ext": "npm run prod:build --prefix ./client/extension",
+    "build:prod:web": "npm run prod:build --prefix ./client/web",
+    "build:prod:server": "npm run build --prefix ./server",
+    "build:prod": "concurrently \"npm run build:prod:ext\" \"npm run build:prod:web\" \"npm run build:prod:server\"",
+    "start:web": "npm run start --prefix ./client/web",
+    "start:api": "npm run start --prefix ./server",
+    "start": "concurrently \"npm run start:web\" \"npm run start:api\"",
+    "install:web": "npm install --prefix ./client/web",
+    "install:extension": "npm install --prefix ./client/extension",
+    "install:server": "npm install --prefix ./server",
+    "install": "concurrently \"npm run install:web\" \"npm run install:extension\" \"npm run install:server\"",
+    "db:deploy": "npm run dev:db_migrate --prefix ./client/web"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "dotenv-cli": "^7.3.0"
+  }
+}

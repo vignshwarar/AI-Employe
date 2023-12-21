@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  name      String?
+  Workflow  Workflow[]
+  createdAt DateTime   @default(now())
+  Plan      Plan[]
+  Stats     Stats[]
+}
+
+model Workflow {
+  id                String                 @id @default(uuid())
+  user              User                   @relation(fields: [userId], references: [id])
+  userId            String
+  title             String
+  objective         String
+  tasks             Json?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime?
+  ActionByUser      RecordedActionByUser[]
+  WorkflowExecution WorkflowExecution[]
+}
+
+model RecordedActionByUser {
+  id             String   @id @default(uuid())
+  workflow       Workflow @relation(fields: [workflowId], references: [id])
+  workflowId     String
+  url            String
+  normalizedUrl  String
+  host           String
+  normalizedHost String
+  action         Json
+  eventTime      DateTime
+  createdAt      DateTime @default(now())
+}
+
+model WorkflowExecution {
+  id         String   @id @default(uuid())
+  workflow   Workflow @relation(fields: [workflowId], references: [id])
+  workflowId String
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+  Task       Task[]
+}
+
+model Task {
+  id                  String            @id @default(uuid())
+  workflowExecution   WorkflowExecution @relation(fields: [workflowExecutionId], references: [id])
+  workflowExecutionId String
+  taskOrder           Int
+  taskDescription     String
+  actionByAI          Json?
+  status              String            @default("pending")
+  createdAt           DateTime          @default(now())
+}
+
+model Stats {
+  id              String   @id @default(uuid())
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String
+  actionsExecuted Int      @default(0)
+  monthYear       String
+  createdAt       DateTime @default(now())
+
+  @@unique([userId, monthYear])
+}
+
+model Plan {
+  id                      String   @id @default(uuid())
+  user                    User     @relation(fields: [userId], references: [id])
+  userId                  String   @unique
+  planName                String   @default("FREE") // free, pro, premium, ltd
+  stripeCustomerId        String?
+  planDuration            String?
+  workflowCreated         Int      @default(0)
+  actionPerMonthAllowed   Int
+  workflowCreationAllowed Int
+  createdAt               DateTime @default(now())
+}

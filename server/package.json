@@ -1,0 +1,19 @@
+{
+  "name": "aiemployee",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "RUST_ENV=development RUST_LOG=info cargo watch -x run",
+    "start": "RUST_ENV=production RUST_LOG=info ./target/release/server",
+    "staging": "RUST_ENV=development RUST_LOG=info ./target/release/server",
+    "update_schema": "RUST_ENV=development diesel --database-url=\"postgresql://postgres:postgres@localhost:5432/aiemplye_dev\" print-schema > src/schema.rs",
+    "build": "cargo build --release"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv-cli": "^7.3.0"
+  }
+}

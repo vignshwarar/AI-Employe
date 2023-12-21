@@ -1,0 +1,14 @@
+node_modules
+bun.lockb
+package-lock.json
+.idea
+.next
+.DS_Store
+.vscode
+target
+Cargo.lock
+build
+.env.*
+meilisearch_data
+cert
+log_*

@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "types": ["bun-types", "chrome-types"],
+    "lib": ["es5", "es6", "dom"],
+    "jsx": "react"
+  }
+}
