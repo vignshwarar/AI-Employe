@@ -51,7 +51,7 @@ export const NavLinks = ({ style }: NavLinksProps) => {
           <Link
             target="_blank"
             className={IndexStyles.GreyText}
-            href="mailto:vigneshwarar.j@gmail.com"
+            href="https://github.com/vignshwarar/AI-Employe"
           >
             Star us on Github
           </Link>
@@ -96,9 +96,12 @@ export const NavLinks = ({ style }: NavLinksProps) => {
           <DropdownMenuContent className="w-56 border-neutral-800 mr-7">
             <DropdownMenuGroup>
               <DropdownMenuItem
-              // onClick={() =>
-
-              // }
+                onClick={() =>
+                  window.open(
+                    "https://github.com/vignshwarar/AI-Employe",
+                    "_blank"
+                  )
+                }
               >
                 <span>Star us on Github</span>
               </DropdownMenuItem>

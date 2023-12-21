@@ -7,7 +7,7 @@ const TinyBanner = () => {
   return (
     <S.TinyBannerContainer
       onClick={() => {
-        window.location.href = "/ltdpricing";
+        window.open("https://github.com/vignshwarar/AI-Employe", "_blank");
       }}
       initial={{
         background: "linear-gradient(90deg, #ec008c 0%, #fc6767 100%)",

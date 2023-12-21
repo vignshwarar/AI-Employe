@@ -2,7 +2,6 @@ import Head from "next/head";
 import type { NextPage } from "next";
 import { CheckCircle, Loader2, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 
 import LandingPageLayout from "@/components/molecules/Layout/LandingPageLayout";
 import { Button } from "@/components/ui/button";
