@@ -16,12 +16,6 @@ import { useToast } from "@/components/ui/use-toast";
 import FooterCTA from "@/components/molecules/Footer";
 import BottomCTA from "@/components/molecules/BottomCTA";
 
-declare global {
-  interface Window {
-    tolt_referral?: any;
-  }
-}
-
 const Pricing: NextPage = () => {
   return (
     <LandingPageLayout>
