@@ -24,7 +24,7 @@ const TinyBanner = () => {
     >
       <p>
         <Github />
-        &nbsp; We are open source <span>|</span> Start us on Github
+        &nbsp; We are open source <span>|</span> Star us on Github
         <ChevronRight />
       </p>
     </S.TinyBannerContainer>
