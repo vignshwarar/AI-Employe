@@ -40,9 +40,7 @@ There are several problems with current browser agents. Here, we explain the pro
 
 There are several techniques for this, ranging from sending a shortened form of HTML to GPT-3, creating a bounding box with IDs and sending it to GPT-4-vision to take actions, or directly asking GPT-4-vision to obtain the X and Y coordinates of the element. However, none of these methods were reliable; they all led to hallucinations.
 
-To address this, we developed a new technique where we index the entire DOM in MeiliSearch, allowing GPT-4-vision to generate commands for which element's inner text to click, copy, or perform other actions. We then search the index with the generated text and retrieve the element ID to send back to the browser to take action. There are a few limitations here, but we have implemented some techniques to overcome them, such as dealing with the same text in multiple elements or clicking on an icon (we are still working on this).
-
-Intuitively, imagine you are guiding your grandmother to use a website; you might say something like, "Click on the button that says 'sign in'." We are doing something similar here.
+To address this, we developed a new technique where we [index](https://github.com/vignshwarar/AI-Employe/blob/db530101c9fd9a0f0d7ce3eeac033e70cb172541/server/src/common/dom/search.rs#L9) the entire DOM in MeiliSearch, allowing GPT-4-vision to generate commands for which element's inner text to click, copy, or perform other actions. We then [search](https://github.com/vignshwarar/AI-Employe/blob/db530101c9fd9a0f0d7ce3eeac033e70cb172541/server/src/common/dom/search.rs#L46) the index with the generated text and retrieve the element ID to send back to the browser to take action. There are a few limitations here, but we have implemented some techniques to overcome them, such as dealing with the same text in multiple elements or clicking on an icon (we are still working on this).
 
 ### Problem 2: GPT Derailing from Workflow
 
