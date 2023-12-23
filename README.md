@@ -50,6 +50,7 @@ To prevent GPT from derailing from tasks, we use a technique that is akin to ret
 
 - [x] Workflows
 - [x] Chat with what you see
+- [x] More actions support scrolling, opening links in a new tab, etc.
 - [ ] Loop in workflows
 - [ ] Clever Tab management
 - [ ] Share workflows
