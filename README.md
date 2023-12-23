@@ -53,6 +53,7 @@ To prevent GPT from derailing from tasks, we use a technique that is akin to ret
 - [ ] Loop in workflows
 - [ ] Clever Tab management
 - [ ] Share workflows
+- [ ] Open source models support
 - [ ] Community shared workflows
 - [ ] Cloud version of AI Employe
 - [ ] Control browser by text
