@@ -5,7 +5,7 @@
 AI Employe is first-ever reliable browser automation
 to gain hours back every week. Effortlessly automate email-to-CRM/ERP data transfers and e2e testing. Automate tasks requiring human-like intelligence: understanding emails, receipts, invoices, etc.
 
-Buy the AI Employee License in an exclusive deal: https://aiemploye.com/ltdpricing
+Buy the AI Employe License in an exclusive deal: https://aiemploye.com/ltdpricing
 
 ## Comparison with Adept.ai
 
