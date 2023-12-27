@@ -9,14 +9,14 @@ class ActionExecutor {
   constructor(tabId: number, actions?: Action[]) {
     this.tabId = tabId;
     this.actions = actions;
-    this.waitAfterClick = 500;
-    this.waitAfterKeystroke = 30;
+    this.waitAfterClick = 300; // ms
+    this.waitAfterKeystroke = 15; // ms
   }
 
   async executeActions() {
     for (const action of this.actions) {
       await this.executeAction(action);
-      await this.wait(500);
+      await this.wait(50);
     }
     return this.tabId;
   }

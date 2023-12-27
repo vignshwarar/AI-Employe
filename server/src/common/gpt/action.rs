@@ -68,7 +68,8 @@ async fn create_workflow_messages(
             "role": "user",
             "content": [{
                 "type": "image_url",
-                "image_url": screenshot_url
+                "image_url": screenshot_url,
+                "resize": 512
             }]
         }));
     }
@@ -152,8 +153,13 @@ pub async fn get_search_term_and_action_with_workflow_id(
 
     log::info!("Actions response from OpenAI: {:?}", actions);
 
-    let parsed_actions = serde_json::from_str::<AIActions>(actions)
-        .context("Failed to parse AIActions from OpenAI response")?;
+    let parsed_actions = match serde_json::from_str::<AIActions>(actions) {
+        Ok(actions) => actions,
+        Err(e) => {
+            log::error!("Failed to parse AIActions from OpenAI response: {}", e);
+            return Err(e.into());
+        }
+    };
 
     Ok((user_browser_actions, parsed_actions))
 }
@@ -221,8 +227,13 @@ pub async fn get_response_from_gpt(open_ai_key: &str, messages: &[JsonValue]) ->
         .and_then(|choice| choice.message.content.as_ref())
         .context("No content found in OpenAI response")?;
 
-    let ai_actions = serde_json::from_str::<AIActions>(choice)
-        .context("Failed to convert OpenAI response content to AIActions")?;
+    let ai_actions = match serde_json::from_str::<AIActions>(choice) {
+        Ok(actions) => actions,
+        Err(e) => {
+            log::error!("Failed to parse AIActions from OpenAI response: {}", e);
+            return Err(e.into());
+        }
+    };
 
     log::debug!("Converted: {:?}", ai_actions);
     Ok(ai_actions)
@@ -242,7 +253,8 @@ async fn create_common_messages(
             "role": "user",
             "content": [{
                 "type": "image_url",
-                "image_url": screenshot_url
+                "image_url": screenshot_url,
+                "resize": 512
             }]
         }));
     }
