@@ -137,68 +137,12 @@ Overall objective: {}
 
 {}
 
-Here are the list of actions you can issue: 
-thought_process: explain your thought process
-action_type: click
-search_term_to_find_this_element: appropriate exact search term without special characters
-block_ids: appropriate block ids, include this if search_term_to_find_this_element exists more than one time, please use this format: "block_id1,block_id2,block_id3"
--
-thought_process: explain your thought process
-action_type: input
-value: appropriate value
-search_term_to_find_this_element: appropriate exact search term without special characters
--
-thought_process: explain your thought process
-action_type: scroll_up
-value: percentage number to go up
--
-thought_process: explain your thought process
-action_type: scroll_down
-value: percentage number to go down
--
-thought_process: explain your thought process
-action_type: enter
-search_term_to_find_this_element: appropriate exact search term without special characters
--
-thought_process: explain your thought process
-action_type: focus
-search_term_to_find_this_element: appropriate exact search term without special characters
--
-thought_process: explain your thought process
-action_type: goto_url
-value: appropriate url
--
-action_type: extract_and_store_info_for_next_task
-value: appropriate extracted value in markdown it should in string not json format ex: 1. entityName=value, etc...
--
-thought_process: explain your thought process
-action_type: stuck
-value: Detail the circumstances or challenges hindering your progress or preventing you from moving forward.
--
-thought_process: explain your thought process
-action_type: chat
-value: please provide a response that is both clear and helpful in the markdown format
--
-thought_process: explain your thought process
-action_type: summarize
-value: please concisely summarize the text visible on the page in the markdown format
--
-thought_process: explain your thought process
-action_type: answer
-value: please answer to the question in the markdown format
--
-thought_process: explain your thought process
-action_type: translate
-value: your translation to the text in the markdown format
-
-
-
 Your revised format for generating tasks should follow this structure:
 {{
   "actions": [
     {{
-      "thought_process": "explain your thought process maximum 5 words",
-      "action_type": "appropriate action type",
+      "thought_process": "explain your thought process maximum 3 words",
+      "action_type": "appropriate action type", // Only these types are allowed: click || input || scroll_up || scroll_down || enter || focus || goto_url || stuck || chat || summarize || answer || translate || extract_and_store_info_for_next_task
       "value": "appropriate value",
       "search_term_to_find_this_element": "appropriate exact search term without special characters",
       "block_ids": "appropriate block ids, include this if search_term_to_find_this_element exists more than one time",
@@ -208,16 +152,12 @@ Your revised format for generating tasks should follow this structure:
   ]
 }}
 
-- When initiating an action such as entering, visiting, or clicking, please refrain from executing additional actions related to URL changes, as we may prompt you again for subsequent actions. 
-- Don't generate summary or answer actions at the same time.
-- Instead of refusing, say all you can
-- Always generate "thought_process" key before any action keys.
-- When you are summarizing, answering or translating, please use journalistic tone, be concise and attach you response in the value field in the markdown format.
-- When you generate "search_term_to_find_this_element" please use exact search term and don't ever include special character or any special symbols.
-- When you generate "block_ids" please use this format: "block_id1,block_id2,block_id3" and only include this if search_term_to_find_this_element exists more than one time.
-- Remember if you choose to use "block_ids" then only please what block_ids that your supervisor mentioned in the task for that particular action, don't make up your own block_ids.
-- Please provide your response strictly in the string format of JSON, avoiding the use of markdown. Begin your JSON response without backticks, maintaining the purity of the JSON format. 
-- Ensure that your response strictly follows the JSON structure provided and is in the string format of JSON, without the use of markdown or any additional commentary, don't talk, just do it.
+- Use the exact search term without special characters.
+- When generating 'block_ids,' please use this format: 'block_id1, block_id2, block_id3.' Include this format only if the search_term_to_find_this_element exists more than once.
+Format the 'block_ids' as specified by the supervisor for multiple occurrences of the search term.
+- Provide a JSON-formatted response strictly following the given structure without markdown or commentary.
+- When summarizing, answering, or translating, please use a journalistic tone, be concise, and attach your response in the value field.
+- Take a deep breath and think step by step. If you do a good job I'll tip you $200.
   "#,
         objective, task_conditional_prompt, actions_str, url_conditional_prompt
     );
