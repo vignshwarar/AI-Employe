@@ -33,7 +33,6 @@ async fn execute_workflow(
     db: web::Data<DatabaseConnection>,
     meilisearch_client: web::Data<MeilisearchClient>,
 ) -> impl Responder {
-    println!("payload: {:?}", user.email);
     let user_info = match get_user_info_from_db(user.email, &db).await {
         Ok(info) => info,
         Err(e) => {
@@ -43,24 +42,25 @@ async fn execute_workflow(
             });
         }
     };
+    if payload.openai_api_key.is_none() {
+        let is_new_action_execution_allowed =
+            match is_new_action_execution_allowed(&user_info.id, &db).await {
+                Ok(info) => info,
+                Err(e) => {
+                    log::error!("is_new_action_execution_allowed: {}", e);
+                    return HttpResponse::InternalServerError().json(Response {
+                        status: ApiStatus::Error(e.to_string()),
+                    });
+                }
+            };
 
-    let is_new_action_execution_allowed =
-        match is_new_action_execution_allowed(&user_info.id, &db).await {
-            Ok(info) => info,
-            Err(e) => {
-                log::error!("is_new_action_execution_allowed: {}", e);
-                return HttpResponse::InternalServerError().json(Response {
-                    status: ApiStatus::Error(e.to_string()),
-                });
-            }
-        };
-
-    if !is_new_action_execution_allowed {
-        return HttpResponse::Unauthorized().json(Response {
-            status: ApiStatus::Error(
-                "User has reached the maximum number of actions allowed".to_string(),
-            ),
-        });
+        if !is_new_action_execution_allowed {
+            return HttpResponse::Unauthorized().json(Response {
+                status: ApiStatus::Error(
+                    "User has reached the maximum number of actions allowed".to_string(),
+                ),
+            });
+        }
     }
 
     let workflow_info = match get_workflow_by_id(&payload.workflow_id, &db).await {
@@ -214,23 +214,25 @@ async fn execute(
         }
     };
 
-    let is_new_action_execution_allowed =
-        match is_new_action_execution_allowed(&user_info.id, &db).await {
-            Ok(info) => info,
-            Err(e) => {
-                log::error!("Error getting user info from db: {}", e);
-                return HttpResponse::InternalServerError().json(Response {
-                    status: ApiStatus::Error(e.to_string()),
-                });
-            }
-        };
+    if payload.openai_api_key.is_none() {
+        let is_new_action_execution_allowed =
+            match is_new_action_execution_allowed(&user_info.id, &db).await {
+                Ok(info) => info,
+                Err(e) => {
+                    log::error!("Error getting user info from db: {}", e);
+                    return HttpResponse::InternalServerError().json(Response {
+                        status: ApiStatus::Error(e.to_string()),
+                    });
+                }
+            };
 
-    if !is_new_action_execution_allowed {
-        return HttpResponse::Unauthorized().json(Response {
-            status: ApiStatus::Error(
-                "User has reached the maximum number of actions allowed".to_string(),
-            ),
-        });
+        if !is_new_action_execution_allowed {
+            return HttpResponse::Unauthorized().json(Response {
+                status: ApiStatus::Error(
+                    "User has reached the maximum number of actions allowed".to_string(),
+                ),
+            });
+        }
     }
 
     let mut ai_action = match get_search_term_and_for_common_action(
