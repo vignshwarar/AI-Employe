@@ -68,8 +68,10 @@ async fn create_workflow_messages(
             "role": "user",
             "content": [{
                 "type": "image_url",
-                "image_url": screenshot_url,
-                "resize": 512
+                "image_url": {
+                    "url": screenshot_url,
+                    "detail": "low"
+                }
             }]
         }));
     }
@@ -253,8 +255,10 @@ async fn create_common_messages(
             "role": "user",
             "content": [{
                 "type": "image_url",
-                "image_url": screenshot_url,
-                "resize": 512
+                "image_url": {
+                    "url": screenshot_url,
+                    "detail": "low"
+                }
             }]
         }));
     }
