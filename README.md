@@ -20,6 +20,8 @@ Buy the AI Employe License in an exclusive deal: https://aiemploye.com/ltdpricin
 
 ## Install
 
+Try without Firebase authentication (temporary solution): https://github.com/vignshwarar/AI-Employe/issues/2#issuecomment-1880328518
+
 Our stack consists of Next.js, Rust, Postgres, MeiliSearch, and Firebase Auth for authentication. Please sign up for a Firebase account and create a project.
 
 In Firebase, navigate to Project settings -> Service accounts, generate a private key, and save it inside ```firebaseAdmin/cert/dev.json``` if it's for development or prod.json if it's for production.
