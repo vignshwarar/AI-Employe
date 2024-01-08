@@ -37,6 +37,7 @@ const commonBuildOptions = {
     "process.env.NEXT_PUBLIC_APP_ID": JSON.stringify(
       process.env.NEXT_PUBLIC_APP_ID
     ),
+    "process.env.DEPLOYMENT_TYPE": JSON.stringify(process.env.DEPLOYMENT_TYPE),
   },
 };
 

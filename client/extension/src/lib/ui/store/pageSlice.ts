@@ -1,3 +1,4 @@
+import isDeploymentTypeOpenSource from "../utils/deploymentType";
 import { StateCreator } from "zustand";
 
 export enum Page {
@@ -18,7 +19,7 @@ export type PageSlice = {
 };
 
 export const createPageSlice: StateCreator<PageSlice> = (set) => ({
-  activePage: Page.Login,
+  activePage: isDeploymentTypeOpenSource() ? Page.YourWorkflows : Page.Login,
   setActivePage: (page: Page) => set({ activePage: page }),
   blurContent: false,
   setBlurContent: (blur: boolean) => set({ blurContent: blur }),

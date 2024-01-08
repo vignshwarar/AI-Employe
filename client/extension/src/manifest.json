@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "AI Employe",
+  "name": "AI Employe (Open source)",
   "description": "First reliable AI browser automation powered by GPT-4 Vision.",
   "version": "1.0",
   "background": {

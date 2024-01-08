@@ -1,17 +1,15 @@
 use actix_web::{post, web, HttpResponse, Responder};
-use firebase_auth::FirebaseUser;
 use meilisearch_sdk::client::Client as MeilisearchClient;
 
 use crate::{
     common::{
         db::{
             execute::{create_workflow_execution_record, update_workflow_execution_status},
-            stats::{is_new_action_execution_allowed, update_actions_stats_by_user_id},
+            stats::is_new_action_execution_allowed,
             task::{
                 create_tasks_record, get_first_pending_task, update_task_status_and_ai_action,
                 Status,
             },
-            user::get_user_info_from_db,
             workflow::get_workflow_by_id,
         },
         dom::search::build_index_and_attach_node_id,
@@ -23,28 +21,18 @@ use crate::{
             ExecuteWorkflowResponsePayload, Response, Task,
         },
     },
-    utils::config::DatabaseConnection,
+    utils::config::{DatabaseConnection, OPEN_SOURCE_USER_ID},
 };
 
 #[post("/execute_workflow")]
 async fn execute_workflow(
-    user: FirebaseUser,
     payload: web::Json<ExecuteWorkflowRequestPayload>,
     db: web::Data<DatabaseConnection>,
     meilisearch_client: web::Data<MeilisearchClient>,
 ) -> impl Responder {
-    let user_info = match get_user_info_from_db(user.email, &db).await {
-        Ok(info) => info,
-        Err(e) => {
-            log::error!("Error getting user info from db: {}", e);
-            return HttpResponse::Unauthorized().json(Response {
-                status: ApiStatus::Error(e.to_string()),
-            });
-        }
-    };
     if payload.openai_api_key.is_none() {
         let is_new_action_execution_allowed =
-            match is_new_action_execution_allowed(&user_info.id, &db).await {
+            match is_new_action_execution_allowed(&OPEN_SOURCE_USER_ID, &db).await {
                 Ok(info) => info,
                 Err(e) => {
                     log::error!("is_new_action_execution_allowed: {}", e);
@@ -179,15 +167,6 @@ async fn execute_workflow(
         });
     }
 
-    if update_actions_stats_by_user_id(&user_info.id, &db)
-        .await
-        .is_err()
-    {
-        return HttpResponse::InternalServerError().json(Response {
-            status: ApiStatus::Error("Error updating actions stats".to_string()),
-        });
-    }
-
     HttpResponse::Ok().json(ExecuteWorkflowResponsePayload {
         workflow_execution_id: Some(workflow_execution_id.clone()),
         task: Some(first_pending_task),
@@ -199,24 +178,13 @@ async fn execute_workflow(
 
 #[post("/execute")]
 async fn execute(
-    user: FirebaseUser,
     payload: web::Json<ExecuteRequestPayload>,
     db: web::Data<DatabaseConnection>,
     meilisearch_client: web::Data<MeilisearchClient>,
 ) -> impl Responder {
-    let user_info = match get_user_info_from_db(user.email, &db).await {
-        Ok(info) => info,
-        Err(e) => {
-            log::error!("Error getting user info from db: {}", e);
-            return HttpResponse::Unauthorized().json(Response {
-                status: ApiStatus::Error(e.to_string()),
-            });
-        }
-    };
-
     if payload.openai_api_key.is_none() {
         let is_new_action_execution_allowed =
-            match is_new_action_execution_allowed(&user_info.id, &db).await {
+            match is_new_action_execution_allowed(&OPEN_SOURCE_USER_ID, &db).await {
                 Ok(info) => info,
                 Err(e) => {
                     log::error!("Error getting user info from db: {}", e);
@@ -262,15 +230,6 @@ async fn execute(
                 status: ApiStatus::Error("Error indexing HTML".to_string()),
             });
         }
-    }
-
-    if update_actions_stats_by_user_id(&user_info.id, &db)
-        .await
-        .is_err()
-    {
-        return HttpResponse::InternalServerError().json(Response {
-            status: ApiStatus::Error("Error updating actions stats".to_string()),
-        });
     }
 
     HttpResponse::Ok().json(ExecuteWorkflowResponsePayload {

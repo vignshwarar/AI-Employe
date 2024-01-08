@@ -65,12 +65,10 @@ pub async fn get_workflow_by_id(
         .map_err(|e| e.into())
 }
 
-pub async fn get_all_workflows_by_user_id(
-    user_id: &str,
+pub async fn get_all_workflows_without_user_id(
     conn: &DatabaseConnection,
 ) -> Result<Vec<WorkflowInfo>> {
     Workflow
-        .filter(userId.eq(user_id))
         .order(createdAt.desc())
         .load::<WorkflowInfo>(&mut conn.get()?)
         .map_err(|e| e.into())

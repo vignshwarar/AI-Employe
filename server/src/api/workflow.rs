@@ -1,60 +1,28 @@
 use actix_web::{get, post, web, HttpResponse, Responder, Result as ActixResult};
-use firebase_auth::FirebaseUser;
 
 use crate::{
     common::{
         db::{
             action::create_action_records,
-            plan::{is_new_workflow_creation_allowed, update_workflow_usage_by_user_id},
-            user::get_user_info_from_db,
+            plan::update_workflow_usage_by_user_id,
             workflow::{
-                create_workflow_record, get_all_workflows_by_user_id, is_workflow_owned_by_user,
-                update_workflow_by_id, update_workflow_with_tasks,
+                create_workflow_record, get_all_workflows_without_user_id,
+                is_workflow_owned_by_user, update_workflow_by_id, update_workflow_with_tasks,
             },
         },
         gpt::tasks::generate_tasks,
         types::{ApiStatus, CreateWorkflowRequestPayload, Response, UpdateWorkflowRequestPayload},
     },
-    utils::config::DatabaseConnection,
+    utils::config::{DatabaseConnection, OPEN_SOURCE_USER_ID},
 };
 
 #[post("/workflow")]
 async fn create_workflow(
-    user: FirebaseUser,
     payload: web::Json<CreateWorkflowRequestPayload>,
     db: web::Data<DatabaseConnection>,
 ) -> ActixResult<impl Responder> {
-    let user_info = match get_user_info_from_db(user.email, &db).await {
-        Ok(info) => info,
-        Err(e) => {
-            log::error!("Error getting user info from db: {}", e);
-            return Ok(HttpResponse::Unauthorized().json(Response {
-                status: ApiStatus::Error(e.to_string()),
-            }));
-        }
-    };
-
-    let is_new_workflow_creation_allowed =
-        match is_new_workflow_creation_allowed(&user_info.id, &db).await {
-            Ok(info) => info,
-            Err(e) => {
-                log::error!("Error getting user info from db: {}", e);
-                return Ok(HttpResponse::Unauthorized().json(Response {
-                    status: ApiStatus::Error(e.to_string()),
-                }));
-            }
-        };
-
-    if !is_new_workflow_creation_allowed {
-        return Ok(HttpResponse::Unauthorized().json(Response {
-            status: ApiStatus::Error(
-                "User has reached the maximum number of workflows allowed".to_string(),
-            ),
-        }));
-    }
-
     let workflow_id = match create_workflow_record(
-        &user_info.id,
+        &OPEN_SOURCE_USER_ID,
         &payload.objective,
         &payload.title,
         &db,
@@ -101,7 +69,7 @@ async fn create_workflow(
         }));
     }
 
-    if let Err(e) = update_workflow_usage_by_user_id(&user_info.id, &db).await {
+    if let Err(e) = update_workflow_usage_by_user_id(&OPEN_SOURCE_USER_ID, &db).await {
         log::error!("Error updating workflow usage by user id: {}", e);
         return Ok(HttpResponse::InternalServerError().json(Response {
             status: ApiStatus::Error(e.to_string()),
@@ -115,21 +83,8 @@ async fn create_workflow(
 }
 
 #[get("/workflows")]
-async fn get_workflow(
-    user: FirebaseUser,
-    db: web::Data<DatabaseConnection>,
-) -> ActixResult<impl Responder> {
-    let user_info = match get_user_info_from_db(user.email, &db).await {
-        Ok(info) => info,
-        Err(e) => {
-            log::error!("Error getting user info from db: {}", e);
-            return Ok(HttpResponse::Unauthorized().json(Response {
-                status: ApiStatus::Error(e.to_string()),
-            }));
-        }
-    };
-
-    let workflows = match get_all_workflows_by_user_id(&user_info.id, &db).await {
+async fn get_workflow(db: web::Data<DatabaseConnection>) -> ActixResult<impl Responder> {
+    let workflows = match get_all_workflows_without_user_id(&db).await {
         Ok(workflows) => workflows,
         Err(e) => {
             log::error!("Error getting workflows: {}", e);
@@ -144,22 +99,11 @@ async fn get_workflow(
 
 #[post("/update_workflow")]
 async fn update_workflow(
-    user: FirebaseUser,
     payload: web::Json<UpdateWorkflowRequestPayload>,
     db: web::Data<DatabaseConnection>,
 ) -> ActixResult<impl Responder> {
-    let user_info = match get_user_info_from_db(user.email, &db).await {
-        Ok(info) => info,
-        Err(e) => {
-            log::error!("Error getting user info from db: {}", e);
-            return Ok(HttpResponse::Unauthorized().json(Response {
-                status: ApiStatus::Error(e.to_string()),
-            }));
-        }
-    };
-
     let is_workflow_owned_by_user =
-        match is_workflow_owned_by_user(&payload.id, &user_info.id, &db).await {
+        match is_workflow_owned_by_user(&payload.id, &OPEN_SOURCE_USER_ID, &db).await {
             Ok(is_owned) => is_owned,
             Err(e) => {
                 log::error!("Error checking if workflow is owned by user: {}", e);

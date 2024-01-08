@@ -7,10 +7,14 @@ import {
 import firebaseClient from "../ui/firebaseClient";
 import { sendMessage } from "../ui/utils/message";
 import { ActionType } from "../ui/utils/types";
+import isDeploymentTypeOpenSource from "../ui/utils/deploymentType";
 
 export const auth = getAuth(firebaseClient);
 
 export const getUserToken = async () => {
+  if (isDeploymentTypeOpenSource()) {
+    return;
+  }
   return auth.currentUser.getIdToken();
 };
 

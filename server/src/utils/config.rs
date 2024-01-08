@@ -9,10 +9,12 @@ use crate::utils::load_env::load_environment_variables;
 
 pub type DatabaseConnection = r2d2::Pool<ConnectionManager<PgConnection>>;
 
+pub const OPEN_SOURCE_USER_ID: &str = "open-source";
+
 pub struct Config {
     pub db: Data<DatabaseConnection>,
     pub meilisearch_client: Data<MeilisearchClient>,
-    pub firebase_data: Data<FirebaseAuth>,
+    pub firebase_data: Option<Data<FirebaseAuth>>,
     pub bind_address: String,
 }
 
@@ -31,9 +33,18 @@ pub fn setup_meilisearch_client() -> MeilisearchClient {
     MeilisearchClient::new(meilisearch_url, Some(meilisearch_api_key))
 }
 
-pub async fn setup_firebase_auth() -> FirebaseAuth {
+pub async fn setup_firebase_auth() -> Option<FirebaseAuth> {
     let firebase_app_id = env::var("FIREBASE_APP_ID").expect("FIREBASE_APP_ID must be set");
-    FirebaseAuth::new(&firebase_app_id).await
+    if is_deployment_open_source() {
+        None
+    } else {
+        Some(FirebaseAuth::new(&firebase_app_id).await)
+    }
+}
+
+pub fn is_deployment_open_source() -> bool {
+    let deployment_environment = env::var("DEPLOYMENT_TYPE").expect("RUST_ENV must be set");
+    deployment_environment.eq("open-source")
 }
 
 pub async fn init_env() {
@@ -65,7 +76,10 @@ pub fn get_bind_address() -> String {
 
 pub async fn setup_initial_config() -> Config {
     init_env().await;
-    let firebase_data = Data::new(setup_firebase_auth().await);
+    let firebase_data = match setup_firebase_auth().await {
+        Some(firebase_data) => Some(Data::new(firebase_data)),
+        None => None,
+    };
     let database = Data::new(setup_database());
     let meilisearch_client = Data::new(setup_meilisearch_client());
     let bind_address = get_bind_address();

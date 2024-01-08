@@ -21,36 +21,6 @@ pub struct StatsInfo {
     pub createdAt: NaiveDateTime,
 }
 
-pub async fn update_actions_stats_by_user_id(
-    user_id: &str,
-    conn: &DatabaseConnection,
-) -> Result<()> {
-    let current_month_year = chrono::Utc::now().format("%Y-%m").to_string();
-    let stats_info = Stats
-        .filter(userId.eq(user_id))
-        .filter(monthYear.eq(&current_month_year))
-        .first::<StatsInfo>(&mut conn.get()?)?;
-
-    if stats_info.id.is_empty() {
-        diesel::insert_into(Stats)
-            .values((
-                id.eq(&uuid::Uuid::new_v4().to_string()),
-                userId.eq(user_id),
-                actionsExecuted.eq(1),
-                monthYear.eq(&current_month_year),
-                createdAt.eq(chrono::Utc::now().naive_utc()),
-            ))
-            .execute(&mut conn.get()?)?;
-    } else {
-        diesel::update(Stats)
-            .filter(id.eq(stats_info.id))
-            .set(actionsExecuted.eq(actionsExecuted + 1))
-            .execute(&mut conn.get()?)?;
-    }
-
-    Ok(())
-}
-
 pub async fn get_actions_executed_count_current_month(
     user_id: &str,
     conn: &DatabaseConnection,

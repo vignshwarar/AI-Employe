@@ -3,7 +3,10 @@ use chrono::NaiveDateTime;
 use diesel::{prelude::*, ExpressionMethods, QueryDsl, RunQueryDsl, Selectable};
 use serde::{Deserialize, Serialize};
 
-use crate::{schema::User::dsl::*, utils::config::DatabaseConnection};
+use crate::{
+    schema::User::dsl::*,
+    utils::config::{DatabaseConnection, OPEN_SOURCE_USER_ID},
+};
 
 #[derive(Queryable, Selectable, Debug, Clone, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::User)]
@@ -25,16 +28,16 @@ pub async fn get_user_info_by_email(
         .map_err(|e| e.into())
 }
 
-pub async fn get_user_info_from_db(
-    user_email: Option<String>,
-    db: &DatabaseConnection,
-) -> Result<UserInfo> {
-    let result = if let Some(user_email) = user_email {
-        get_user_info_by_email(&user_email, db)
-            .await
-            .map_err(Into::into)
-    } else {
-        Err(anyhow::anyhow!("No email found"))
-    };
-    result
+pub async fn create_open_source_user_record(conn: &DatabaseConnection) -> Result<()> {
+    let user_id = OPEN_SOURCE_USER_ID.to_string();
+    let created_at = chrono::Utc::now().naive_utc();
+    diesel::insert_into(User)
+        .values((
+            id.eq(&user_id),
+            email.eq("dummy_user@open_source"),
+            name.eq("Open Source User"),
+            createdAt.eq(created_at),
+        ))
+        .execute(&mut conn.get()?)?;
+    Ok(())
 }
