@@ -20,7 +20,13 @@ Buy the AI Employe License in an exclusive deal: https://aiemploye.com/ltdpricin
 
 ## Install
 
-Our stack consists of Next.js, Rust, Postgres, MeiliSearch, and Firebase auth for authentication. Please sign up for a Firebase account and create a project. Then, ensure you install the dependencies before starting the app.
+Our stack consists of Next.js, Rust, Postgres, MeiliSearch, and Firebase Auth for authentication. Please sign up for a Firebase account and create a project.
+
+In Firebase, navigate to Project settings -> Service accounts, generate a private key, and save it inside ```firebaseAdmin/cert/dev.json``` if it's for development or prod.json if it's for production.
+
+After that, make sure you install the dependencies before starting the app.
+
+
 
 - Copy the the .env.sample file to .env.production or .env.development
 - Fill the .env file with your credentials
