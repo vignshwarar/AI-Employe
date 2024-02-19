@@ -1,23 +1,3 @@
-<a href="https://aiemploye.com">![AI Employe](https://res.cloudinary.com/dgxzz0bav/image/upload/v1703117939/Frame_15_jbcql5.png)</a>
-
-## AI Employe
-
-AI Employe is first-ever reliable browser automation
-to gain hours back every week. Effortlessly automate email-to-CRM/ERP data transfers and e2e testing. Automate tasks requiring human-like intelligence: understanding emails, receipts, invoices, etc.
-
-Buy the AI Employe License in an exclusive deal: https://aiemploye.com/ltdpricing
-
-## Comparison with Adept.ai
-
-<div>
-    <a href="https://www.loom.com/share/27d1f8983572429a8a08efdb2c336fe8">
-      <p>Comparison: Adept.ai vs AI Employe - Watch Video (loom.com/share/27d1f8983572429a8a08efdb2c336fe8)</p>
-    </a>
-    <a href="https://www.loom.com/share/27d1f8983572429a8a08efdb2c336fe8">
-      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/27d1f8983572429a8a08efdb2c336fe8-with-play.gif">
-    </a>
-</div>
-
 ## Install
 
 Try without Firebase authentication (temporary solution): https://github.com/vignshwarar/AI-Employe/issues/2#issuecomment-1880328518
